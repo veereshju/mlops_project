@@ -6,7 +6,7 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip pip install scikit-learn
+RUN pip install scikit-learn
 
 RUN pip install pytest
 
