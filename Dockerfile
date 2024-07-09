@@ -6,7 +6,7 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install scikit-learn
+RUN pip install tensorflow
 
 RUN pip install pytest
 
