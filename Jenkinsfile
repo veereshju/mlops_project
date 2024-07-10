@@ -8,11 +8,17 @@ pipeline {
         sh 'docker tag my-ml-app $DOCKER_BFLASK_IMAGE'
       }
     }
-//     stage('Test') {
-//       steps {
-//         sh 'docker run my-ml-app python -m pytest app/tests/'
-//       }
-//     }
+    stage('Retraining model') {
+      steps {
+        sh 'docker run my-ml-app python app/tests/retrain.py'
+        sh 'docker tag my-ml-app $DOCKER_BFLASK_IMAGE'
+      }
+    }
+     stage('Test') {
+       steps {
+         sh 'docker run my-ml-app python -m pytest model/evaluate.py'
+       }
+     }
 //     stage('Image Push to Registry') {
 //       steps {
 //           sh 'docker push $DOCKER_BFLASK_IMAGE'
