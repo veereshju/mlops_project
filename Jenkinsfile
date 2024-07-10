@@ -16,7 +16,7 @@ pipeline {
     }
      stage('Test') {
        steps {
-         sh 'docker run my-ml-app python -m pytest model/evaluate.py'
+         sh 'docker run my-ml-app python -m pytest app/model/evaluate.py'
        }
      }
 //     stage('Image Push to Registry') {

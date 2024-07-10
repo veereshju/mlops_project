@@ -1,6 +1,6 @@
 FROM python:3.12
 
-WORKDIR /flask_app
+WORKDIR /ml_app
 
 COPY requirements.txt .
 
