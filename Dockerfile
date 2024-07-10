@@ -12,6 +12,4 @@ COPY . .
 
 COPY model /ml_app/model
 
-COPY model/trained_model /ml_app/model/trained_model
-
 COPY model/data /ml_app/model/data
