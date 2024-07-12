@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: my-flask-app
-        image: ${DOCKER_BFLASK_IMAGE} #The Docker image
+        image: 16.170.238.194:5000/jenkins #${DOCKER_BFLASK_IMAGE} #The Docker image
         ports:
         - containerPort: 5000
