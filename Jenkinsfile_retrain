@@ -1,0 +1,38 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Pull Image From Registry') {
+      steps {
+        sh 'docker pull $DOCKER_BFLASK_IMAGE'
+      }
+    }
+    stage('Retraining model') {
+      steps {
+        sh 'docker run $DOCKER_BFLASK_IMAGE python /app/retrain.py'
+      }
+    }
+     stage('Test') {
+       steps {
+         sh 'docker run $DOCKER_BFLASK_IMAGE -m pytest /app/evaluate.py'
+       }
+     }
+     stage('Image Push to Registry') {
+       steps {
+           sh 'docker push $DOCKER_BFLASK_IMAGE'
+       }
+     }
+   stage('Deploy to Kubernetes') {
+       steps {
+         script {
+           withCredentials([file(credentialsId: 'kubernetes-config-file', variable: 'KUBECONFIG')]) {
+                         sh 'kubectl apply -f deploy/deployment.yaml'
+                         sh 'kubectl apply -f deploy/service.yaml'
+           }
+         }
+       }
+     }
+
+  }
+
+}

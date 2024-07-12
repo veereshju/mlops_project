@@ -4,36 +4,30 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'docker build -t my-ml-app .'
-        sh 'docker tag my-ml-app $DOCKER_BFLASK_IMAGE'
+        sh 'docker build -t my-flask-app .'
+        sh 'docker tag my-flask-app $DOCKER_BFLASK_IMAGE'
       }
     }
-    stage('Retraining model') {
+    stage('Test') {
       steps {
-        sh 'docker run my-ml-app python /ml_app/model/retrain.py'
-        sh 'docker tag my-ml-app $DOCKER_BFLASK_IMAGE'
+        sh 'docker run my-flask-app python -m pytest app/tests/'
       }
     }
-     stage('Test') {
-       steps {
-         sh 'docker run my-ml-app python -m pytest /ml_app/model/evaluate.py'
-       }
-     }
-//     stage('Image Push to Registry') {
-//       steps {
-//           sh 'docker push $DOCKER_BFLASK_IMAGE'
-//       }
-//     }
-//   stage('Deploy to Kubernetes') {
-//       steps {
-//         script {
-//           withCredentials([file(credentialsId: 'kubernetes-config-file', variable: 'KUBECONFIG')]) {
-//                         sh 'kubectl apply -f deploy/deployment.yaml'
-//                         sh 'kubectl apply -f deploy/service.yaml'
-//           }
-//         }
-//       }
-//     }
+    stage('Image Push to Registry') {
+      steps {
+          sh 'docker push $DOCKER_BFLASK_IMAGE'
+      }
+    }
+  stage('Deploy to Kubernetes') {
+      steps {
+        script {
+          withCredentials([file(credentialsId: 'kubernetes-config-file', variable: 'KUBECONFIG')]) {
+                        sh 'kubectl apply -f deploy/deployment.yaml'
+                        sh 'kubectl apply -f deploy/service.yaml'
+          }
+        }
+      }
+    }
 
   }
 
