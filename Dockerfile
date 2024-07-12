@@ -10,6 +10,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-COPY model /ml_app/model
+COPY app/model /ml_app/model
 
-COPY model/data /ml_app/model/data
+COPY app/model/data /ml_app/model/data
+
+CMD ["python", "model_server.py"]
