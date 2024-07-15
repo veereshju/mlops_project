@@ -5,6 +5,8 @@ pipeline {
     stage('Pull Image From Registry') {
       steps {
         sh 'docker pull $DOCKER_BFLASK_IMAGE'
+        sh 'docker run $DOCKER_BFLASK_IMAGE ls'
+        sh 'docker run $DOCKER_BFLASK_IMAGE ls model'
       }
     }
     stage('Retraining model') {
