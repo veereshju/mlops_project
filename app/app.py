@@ -12,8 +12,7 @@ def index():
             X = [float(i) for i in X]
             if len(X) == 5:
                 model = model_load("model/model.pkl")
-                y = type(model)
-                #y = model.predict(preprocess_scale([X]))
+                y = model.predict(preprocess_scale([X]))
         return render_template('index.html', result=y)
     else:
         return render_template('index.html', result='')
