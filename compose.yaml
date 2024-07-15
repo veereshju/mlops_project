@@ -4,4 +4,5 @@ services:
       context: .
     image: $DOCKER_BFLASK_IMAGE
     ports:
-      - 5000:5000
+      - 8000:8000
+
