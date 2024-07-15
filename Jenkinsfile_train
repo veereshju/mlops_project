@@ -12,16 +12,16 @@ pipeline {
     stage('Retraining model') {
         steps  {
           script {
-                       def containerId = docker.image($DOCKER_BFLASK_IMAGE).run('-d').id
+                       def containerId = docker.image("volzhinnikita/jenkins:latest").run('-d').id
                        sh "docker exec ${containerId} python train.py"
-                       sh "docker commit ${containerId} $DOCKER_BFLASK_IMAGE"
+                       sh "docker commit ${containerId} volzhinnikita/jenkins:latest"
                     }
         //sh 'docker run $DOCKER_BFLASK_IMAGE python train.py'
         }
     }
      stage('Test') {
        steps {
-         sh 'docker run $DOCKER_BFLASK_IMAGE python -m pytest evaluate.py'
+         sh 'docker run volzhinnikita/jenkins:latest python -m pytest evaluate.py'
        }
      }
 
