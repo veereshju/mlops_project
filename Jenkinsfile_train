@@ -10,11 +10,13 @@ pipeline {
     }
     stage('Retraining model') {
       steps {
+          script {
         def containerId = docker.image('your_image_name').run('-d').id
         sh "docker exec ${containerId} python train.py"
         sh "docker commit ${containerId} $DOCKER_BFLASK_IMAGE"
 
         //sh 'docker run $DOCKER_BFLASK_IMAGE python train.py'
+        }
       }
     }
      stage('Test') {
