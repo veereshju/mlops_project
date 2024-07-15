@@ -15,6 +15,7 @@ pipeline {
                        def containerId = docker.image("volzhinnikita/jenkins:latest").run('-d').id
                        sh "docker exec ${containerId} python train.py"
                        sh "docker commit ${containerId} volzhinnikita/jenkins:latest"
+                       sh "docker stop ${containerId}"
                     }
         //sh 'docker run $DOCKER_BFLASK_IMAGE python train.py'
         }
@@ -31,6 +32,8 @@ pipeline {
           sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin docker.io"
           sh 'docker push $DOCKER_BFLASK_IMAGE'
           sh 'docker run $DOCKER_BFLASK_IMAGE ls'
+          sh 'docker run $DOCKER_BFLASK_IMAGE ls model'
+
 
         }
       }
