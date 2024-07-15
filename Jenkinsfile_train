@@ -6,18 +6,17 @@ pipeline {
       steps {
         sh 'docker build -t my-flask-app .'
         sh 'docker tag my-flask-app $DOCKER_BFLASK_IMAGE'
+        sh 'docker run -p 5000:5000 -td $DOCKER_BFLASK_IMAGE'
       }
     }
     stage('Retraining model') {
-      steps {
-          script {
-        def containerId = docker.image($DOCKER_BFLASK_IMAGE).run('-d').id
-        sh "docker exec ${containerId} python train.py"
-        sh "docker commit ${containerId} $DOCKER_BFLASK_IMAGE"
-
+      script {
+                   def containerId = docker.image($DOCKER_BFLASK_IMAGE).run('-d').id
+                   sh "docker exec ${containerId} python train.py"
+                   sh "docker commit ${containerId} $DOCKER_BFLASK_IMAGE"
+                }
         //sh 'docker run $DOCKER_BFLASK_IMAGE python train.py'
-        }
-      }
+
     }
      stage('Test') {
        steps {
