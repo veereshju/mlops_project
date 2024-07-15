@@ -1,8 +1,0 @@
-services:
-  server:
-    build:
-      context: .
-    image: $DOCKER_BFLASK_IMAGE
-    ports:
-      - 8000:8000
-
