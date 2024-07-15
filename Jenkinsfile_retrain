@@ -15,7 +15,7 @@ pipeline {
     }
      stage('Test') {
        steps {
-         sh 'docker run $DOCKER_BFLASK_IMAGE -m pytest /app/evaluate.py'
+         sh 'docker run $DOCKER_BFLASK_IMAGE -m pytest evaluate.py'
        }
      }
 
