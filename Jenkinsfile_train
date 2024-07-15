@@ -10,7 +10,7 @@ pipeline {
     stage('Retraining model') {
       steps {
         sh 'docker run $DOCKER_BFLASK_IMAGE ls'
-        sh 'docker run $DOCKER_BFLASK_IMAGE python retrain.py'
+        sh 'docker run $DOCKER_BFLASK_IMAGE python train.py'
       }
     }
      stage('Test') {
