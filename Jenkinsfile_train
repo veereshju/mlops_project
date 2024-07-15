@@ -17,7 +17,6 @@ pipeline {
                        sh "docker commit ${containerId} volzhinnikita/jenkins:latest"
                        sh "docker stop ${containerId}"
                     }
-        //sh 'docker run $DOCKER_BFLASK_IMAGE python train.py'
         }
     }
      stage('Test') {

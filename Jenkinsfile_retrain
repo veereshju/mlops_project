@@ -9,9 +9,13 @@ pipeline {
     }
     stage('Retraining model') {
       steps {
-        sh 'docker run $DOCKER_BFLASK_IMAGE ls'
-        sh 'docker run $DOCKER_BFLASK_IMAGE python retrain.py'
-      }
+        script {
+                   def containerId = docker.image("volzhinnikita/jenkins:latest").run('-d').id
+                   sh "docker exec ${containerId} python retrain.py"
+                   sh "docker commit ${containerId} volzhinnikita/jenkins:latest"
+                   sh "docker stop ${containerId}"
+                }
+        }
     }
      stage('Test') {
        steps {
