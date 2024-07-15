@@ -5,7 +5,7 @@ X_train, X_test, y_train, y_test = preprocess_split("model/data/trigo.csv")
 X_train = preprocess_scale(X_train)
 X_test = preprocess_scale(X_test)
 model = train(X_train, y_train)
-with open("model/model.pkl", "wb") as f:
+with open("model.pkl", "wb") as f:
     pickle.dump(model, f)
 #model_save(model, "model/model.pkl")
 model = model_load("model/model.pkl")
