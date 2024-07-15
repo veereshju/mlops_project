@@ -8,4 +8,4 @@ model = train(X_train, y_train)
 with open("model.pkl", "wb") as f:
     pickle.dump(model, f)
 #model_save(model, "model/model.pkl")
-model = model_load("model/model.pkl")
+model = model_load("model.pkl")
