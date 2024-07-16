@@ -55,7 +55,7 @@ deg = [2, 3, 4, 5]
 for i in deg:
     svr_params["degree"] = i
     svr = SVR(**svr_params)
-    info_svr, r2 = mlflow_run(svr, "svr_regressor with degree {}".format(str(i)), "data/trigo.csv", svr_params)
+    info_svr, r2 = mlflow_run(svr, "svr_regressor with degree {}".format(str(i)), "model/data/elementary.csv", svr_params)
     scores.append(r2)
     infos.append(info_svr)
 
