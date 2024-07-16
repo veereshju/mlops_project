@@ -40,7 +40,7 @@ infos = list()
 
 sgd = SGDRegressor(**sgd_params)
 
-info_sgd, r2 = mlflow_run(sgd, "sgd_regressor", "data/trigo.csv", sgd_params)
+info_sgd, r2 = mlflow_run(sgd, "sgd_regressor", "model/data/elementary.csv", sgd_params)
 scores.append(r2)
 infos.append(info_sgd)
 
