@@ -32,9 +32,17 @@ pipeline {
           sh 'docker push $DOCKER_BFLASK_IMAGE'
           sh 'docker run $DOCKER_BFLASK_IMAGE ls'
           sh 'docker run $DOCKER_BFLASK_IMAGE ls model'
-
-
+          def containerId = docker.image("volzhinnikita/jenkins:latest").run('-d').id
+          sh "docker stop ${containerId}"
         }
+      }
+    }
+    stage('Pull Image From Registry') {
+      steps {
+        sh 'docker pull $DOCKER_BFLASK_IMAGE'
+        sh 'docker run $DOCKER_BFLASK_IMAGE ls'
+        sh 'docker run $DOCKER_BFLASK_IMAGE ls model'
+        sh 'docker run -p 5000:5000 -td $DOCKER_BFLASK_IMAGE'
       }
     }
 
