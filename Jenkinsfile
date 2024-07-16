@@ -5,18 +5,23 @@ pipeline {
     stage('Check and Stop Existing Container') {
             steps {
                 script {
-                    // Check if port 5000 is in use
-                    def portInUse = sh(script: "lsof -i:5000", returnStatus: true) == 0
+                    def containerId = sh(script: "docker ps --filter 'publish=5000' --format '{{.ID}}'", returnStdout: true).trim()
 
-                    if (portInUse) {
-                        // Find the container ID using port 5000
-                        def containerId = sh(script: "docker ps --filter 'publish=5000' --format '{{.ID}}'", returnStdout: true).trim()
+                    if (containerId) {
+                        // Stop the container
+                        sh "docker stop ${containerId}"
+                        echo "Stopped container ${containerId} that was using port 5000"
 
-                        if (containerId) {
-                            // Stop the container
-                            sh "docker stop ${containerId}"
-                            echo "Stopped container ${containerId} that was using port 5000"
+                        // Verify the container is stopped
+                        def containerRunning = sh(script: "docker ps --filter 'id=${containerId}' --format '{{.ID}}'", returnStdout: true).trim()
+
+                        if (containerRunning) {
+                            error "Failed to stop container ${containerId}. Manual intervention required."
+                        } else {
+                            echo "Container ${containerId} successfully stopped."
                         }
+                    } else {
+                        echo "No container found using port 5000."
                     }
                 }
             }
