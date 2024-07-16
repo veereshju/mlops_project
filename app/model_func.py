@@ -34,13 +34,19 @@ def preprocess_scale(X_test):
     X_test = scaler.transform(X_test)
     return X_test
 
-def train(X_train, y_train):
-    model = SGDRegressor(max_iter=1000, tol=1e-3, random_state=42)
+def train(model, X_train, y_train):
     model.fit(X_train, y_train)
-    return model
+    train_acc = model.score(X_train, y_train)
+    mlflow.log_metric("Training Accuracy", train_acc)
+    print(f"Train Accuracy: {train_acc:.3%}")
 
 def evaluate(model, X_test, y_test):
-    return mean_squared_error(y_test, model.predict(X_test))
+    y_pred = model.predict(X_test)
+    r2 =  r2_score(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
+    mlflow.log_metric("r2", r2)
+    mlflow.log_metric("mean_squared_error", mse)
+    return r2, mse
 
 def retrain(model, X_train, y_train):
     model.partial_fit(X_train, y_train)
