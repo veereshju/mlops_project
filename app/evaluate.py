@@ -7,4 +7,4 @@ def test_performace():
     X_test = preprocess_scale(X_test)
     mse = evaluate(model, X_test, y_test)
     print("Mean Square Error of the model is {}".format(mse))
-    assert mse > 0.02
+    assert mse < 0.02
