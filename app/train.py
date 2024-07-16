@@ -3,6 +3,7 @@ import mlflow
 import os
 from sklearn.linear_model import SGDRegressor
 from mlflow.models import infer_signature
+from sklearn.svm import SVR
 
 #os.makedirs("/mlruns", exist_ok=True)
 #mlflow.set_tracking_uri("file:///mlruns")
