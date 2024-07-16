@@ -4,8 +4,9 @@ import os
 from sklearn.linear_model import SGDRegressor
 from mlflow.models import infer_signature
 
-os.makedirs("/mlruns", exist_ok=True)
-mlflow.set_tracking_uri("file:///mlruns")
+#os.makedirs("/mlruns", exist_ok=True)
+#mlflow.set_tracking_uri("file:///mlruns")
+mlflow.set_tracking_uri("http://127.0.0.1:8000")
 mlflow.set_experiment("Integraion experiment")
 
 def mlflow_run(model, name, path, params):
