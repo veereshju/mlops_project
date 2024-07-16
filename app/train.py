@@ -45,6 +45,19 @@ info_sgd, r2 = mlflow_run(sgd, "sgd_regressor", "model/data/elementary.csv", sgd
 scores.append(r2)
 infos.append(info_sgd)
 
+svr_params = {
+    "kernel":'rbf',
+    "degree":3,
+}
+deg = [2, 3, 4, 5]
+
+for i in deg:
+    svr_params["degree"] = i
+    svr = SVR(**svr_params)
+    info_svr, r2 = mlflow_run(svr, "svr_regressor with degree {}".format(str(i)), "data/trigo.csv", svr_params)
+    scores.append(r2)
+    infos.append(info_svr)
+
 uri_of_model = infos[scores.index(max(scores))].model_uri
 
 loaded_model = mlflow.pyfunc.load_model(uri_of_model)
