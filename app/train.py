@@ -1,5 +1,13 @@
 from model_func import preprocess_split, preprocess_scale, train, model_save, model_load
 import mlflow
+import os
+
+with mlflow.start_run():
+    # Log parameters
+    mlflow.log_param("param1", 5)
+
+
+os.makedirs("/mlruns", exist_ok=True)
 mlflow.set_tracking_uri("file:///mlruns")
 mlflow.set_experiment("Integraion experiment")
 
