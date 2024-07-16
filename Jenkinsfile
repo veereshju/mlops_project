@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   stages {
-  stage('Check and Stop Existing Container') {
+    stage('Check and Stop Existing Container') {
             steps {
                 script {
                     // Check if port 5000 is in use
@@ -20,6 +20,7 @@ pipeline {
                     }
                 }
             }
+        }
     stage('Build') {
       steps {
         sh 'docker build -t my-flask-app .'
