@@ -32,6 +32,11 @@ pipeline {
         sh 'docker tag my-flask-app $DOCKER_BFLASK_IMAGE'
       }
     }
+    stage('start mlflow server'){
+        steps {
+            sh 'docker exec ${containerId} mlflow server --host 127.0.0.1 --port 8000'
+        }
+    }
     stage('Retraining model') {
         steps  {
           script {
