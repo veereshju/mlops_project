@@ -12,7 +12,7 @@ pipeline {
         steps  {
           script {
                        def containerId = docker.image("volzhinnikita/jenkins:latest").run('-d').id
-                       sh "docker exec ${containerId} python retrain.py"
+                       sh "docker exec ${containerId} python train.py"
                        sh "docker commit ${containerId} volzhinnikita/jenkins:latest"
                        sh "docker stop ${containerId}"
                     }
