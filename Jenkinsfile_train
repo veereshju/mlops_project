@@ -34,7 +34,7 @@ pipeline {
     }
     stage('start mlflow server'){
         steps {
-            sh 'docker run $DOCKER_BFLASK_IMAGE mlflow server --host 127.0.0.1 --port 8000'
+            sh 'docker run -d $DOCKER_BFLASK_IMAGE mlflow server --host 127.0.0.1 --port 8000'
         }
     }
     stage('Retraining model') {
