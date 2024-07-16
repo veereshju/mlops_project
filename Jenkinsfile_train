@@ -2,6 +2,30 @@ pipeline {
   agent any
 
   stages {
+    stage('Check and Stop Existing Container') {
+            steps {
+                script {
+                    def containerId = sh(script: "docker ps --filter 'publish=5000' --format '{{.ID}}'", returnStdout: true).trim()
+
+                    if (containerId) {
+                        // Stop the container
+                        sh "docker stop ${containerId}"
+                        echo "Stopped container ${containerId} that was using port 5000"
+
+                        // Verify the container is stopped
+                        def containerRunning = sh(script: "docker ps --filter 'id=${containerId}' --format '{{.ID}}'", returnStdout: true).trim()
+
+                        if (containerRunning) {
+                            error "Failed to stop container ${containerId}. Manual intervention required."
+                        } else {
+                            echo "Container ${containerId} successfully stopped."
+                        }
+                    } else {
+                        echo "No container found using port 5000."
+                    }
+                }
+            }
+        }
     stage('Build') {
       steps {
         sh 'docker build -t my-flask-app .'
