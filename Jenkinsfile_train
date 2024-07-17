@@ -37,14 +37,14 @@ pipeline {
           script {
                        def containerId = docker.image("volzhinnikita/jenkins:latest").run('-d').id
                        sh "docker exec ${containerId} python train.py"
-                       sh "docker commit ${containerId} volzhinnikita/jenkins:latest"
+                       sh "docker commit ${containerId} $DOCKER_BFLASK_IMAGE"
                        sh "docker stop ${containerId}"
                     }
         }
     }
      stage('Evaluate performance') {
        steps {
-         sh 'docker run volzhinnikita/jenkins:latest python -m pytest evaluate.py'
+         sh 'docker run $DOCKER_BFLASK_IMAGE python -m pytest evaluate.py'
        }
      }
 
@@ -59,7 +59,6 @@ pipeline {
     stage('Deploy') {
         steps {
             script{
-                //sh 'docker pull $DOCKER_BFLASK_IMAGE'
                 sh 'docker run -p 5000:5000 -p 8000:8000 -td $DOCKER_BFLASK_IMAGE'
               }
         }
