@@ -1,8 +1,8 @@
 pipeline {
-  agent any
+    agent any
 
-  stages {
-    stage('Check and Stop Existing Container') {
+    stages {
+        stage('Check and Stop Existing Container') {
             steps {
                 script {
                     def containerId = sh(script: "docker ps --filter 'publish=5000' --format '{{.ID}}'", returnStdout: true).trim()
@@ -26,44 +26,41 @@ pipeline {
                 }
             }
         }
-    stage('Pulling image') {
-      steps {
-        sh 'docker pull $DOCKER_BFLASK_IMAGE'
-      }
-    }
+        stage('Pulling image') {
+            steps {
+                sh 'docker pull $DOCKER_BFLASK_IMAGE'
+            }
+        }
 
-    stage('Retraining model') {
-        steps  {
-          script {
-                       def containerId = docker.image(env.DOCKER_BFLASK_IMAGE).run('-d').id
-                       sh "docker exec ${containerId} python train.py"
-                       sh "docker commit ${containerId} $DOCKER_BFLASK_IMAGE"
-                       sh "docker stop ${containerId}"
-                    }
+        stage('Retraining model') {
+            steps {
+                script {
+                    def containerId = docker.image(env.DOCKER_BFLASK_IMAGE).run('-d').id
+                    sh "docker exec ${containerId} python train.py"
+                    sh "docker commit ${containerId} $DOCKER_BFLASK_IMAGE"
+                    sh "docker stop ${containerId}"
+                }
+            }
+        }
+        stage('Evaluate performance') {
+            steps {
+                sh 'docker run $DOCKER_BFLASK_IMAGE python -m pytest evaluate.py'
+            }
+        }
+        stage('Pushing image to registry') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: "${DOCKER_REGISTRY_CREDS}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin docker.io"
+                    sh 'docker push $DOCKER_BFLASK_IMAGE'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    sh 'docker run -p 5000:5000 -p 8000:8000 -td $DOCKER_BFLASK_IMAGE'
+                }
+            }
         }
     }
-     stage('Evaluate performance') {
-       steps {
-         sh 'docker run $DOCKER_BFLASK_IMAGE python -m pytest evaluate.py'
-       }
-     }
-
-   stage('Pushing image to registry') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: "${DOCKER_REGISTRY_CREDS}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-          sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin docker.io"
-          sh 'docker push $DOCKER_BFLASK_IMAGE'
-        }
-      }
-    }
-    stage('Deploy') {
-        steps {
-            script{
-                sh 'docker run -p 5000:5000 -p 8000:8000 -td $DOCKER_BFLASK_IMAGE'
-              }
-        }
-    }
-
-  }
-
 }
