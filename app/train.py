@@ -1,32 +1,18 @@
-from model_func import preprocess_split, preprocess_scale, train, model_save, model_load, evaluate, preprocess_first_scale
+from model_func import mlflow_run, model_save
 import mlflow
-import os
 from sklearn.linear_model import SGDRegressor
-from mlflow.models import infer_signature
 from sklearn.svm import SVR
 
+'''
+The following 3 lines may be used is one does not want to run mlflow server. In such a case the code will run correctly, 
+but MLFlow UI will not be available
+'''
+#import os
 #os.makedirs("/mlruns", exist_ok=True)
 #mlflow.set_tracking_uri("file:///mlruns")
+
 mlflow.set_tracking_uri("http://127.0.0.1:8000")
 mlflow.set_experiment("Integraion experiment")
-
-def mlflow_run(model, name, path, params):
-    with mlflow.start_run(run_name=name):
-        X_train, X_test, y_train, y_test = preprocess_split(path)
-        X_train, X_test = preprocess_first_scale(X_train, X_test)
-        train(model, X_train, y_train)
-        r2, mse = evaluate(model, X_test, y_test)
-        mlflow.log_params(params)
-        mlflow.set_tag("Training Info", "Regression model for integration data")
-        signature = infer_signature(X_train, model.predict(X_train))
-        model_info = mlflow.sklearn.log_model(
-            sk_model=model,
-            artifact_path=name,
-            signature=signature,
-            input_example=X_train,
-            registered_model_name=name,
-        )
-    return model_info, r2
 
 sgd_params = {
     "max_iter": 1000,
@@ -50,6 +36,7 @@ svr_params = {
     "kernel":'rbf',
     "degree":3,
 }
+
 deg = [2, 3, 4, 5]
 
 for i in deg:

@@ -1,15 +1,12 @@
 import pandas as pd
 import mlflow
 import mlflow.sklearn
-from mlflow.models import infer_signature
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import SGDRegressor
 from sklearn.metrics import r2_score
-from sklearn.svm import SVR
-
 from sklearn.metrics import mean_squared_error
 import pickle
+from mlflow.models import infer_signature
 
 def preprocess_split(path):
     dataset = pd.read_csv(path)
@@ -59,3 +56,21 @@ def model_load(path):
     with open(path, 'rb') as f:
         model = pickle.load(f)
     return model
+
+def mlflow_run(model, name, path, params):
+    with mlflow.start_run(run_name=name):
+        X_train, X_test, y_train, y_test = preprocess_split(path)
+        X_train, X_test = preprocess_first_scale(X_train, X_test)
+        train(model, X_train, y_train)
+        r2, mse = evaluate(model, X_test, y_test)
+        mlflow.log_params(params)
+        mlflow.set_tag("Training Info", "Regression model for integration data")
+        signature = infer_signature(X_train, model.predict(X_train))
+        model_info = mlflow.sklearn.log_model(
+            sk_model=model,
+            artifact_path=name,
+            signature=signature,
+            input_example=X_train,
+            registered_model_name=name,
+        )
+    return model_info, r2
