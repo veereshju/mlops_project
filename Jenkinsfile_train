@@ -59,9 +59,7 @@ pipeline {
     stage('Deploy') {
         steps {
             script{
-                //def containerId = docker.image("volzhinnikita/jenkins:latest").run('-d').id
-                //sh "docker stop ${containerId}"
-                sh 'docker pull $DOCKER_BFLASK_IMAGE'
+                //sh 'docker pull $DOCKER_BFLASK_IMAGE'
                 sh 'docker run -p 5000:5000 -p 8000:8000 -td $DOCKER_BFLASK_IMAGE'
               }
         }
