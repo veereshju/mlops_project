@@ -14,6 +14,8 @@ but MLFlow UI will not be available
 mlflow.set_tracking_uri("http://127.0.0.1:8000")
 mlflow.set_experiment("Integraion experiment")
 
+#Defining hyperparameters
+
 sgd_params = {
     "max_iter": 1000,
     "loss": "squared_error",
@@ -22,6 +24,13 @@ sgd_params = {
     "tol": 1e-3,
     "random_state": 42,
 }
+
+svr_params = {
+    "kernel":'rbf',
+    "degree":3,
+}
+
+deg = [2, 3, 4, 5]
 
 scores = list()
 infos = list()
@@ -32,13 +41,6 @@ info_sgd, r2 = mlflow_run(sgd, "sgd_regressor", "model/data/elementary.csv", sgd
 scores.append(r2)
 infos.append(info_sgd)
 
-svr_params = {
-    "kernel":'rbf',
-    "degree":3,
-}
-
-deg = [2, 3, 4, 5]
-
 for i in deg:
     svr_params["degree"] = i
     svr = SVR(**svr_params)
@@ -46,6 +48,7 @@ for i in deg:
     scores.append(r2)
     infos.append(info_svr)
 
+#getting uri of the best model and saving it
 uri_of_model = infos[scores.index(max(scores))].model_uri
 
 loaded_model = mlflow.pyfunc.load_model(uri_of_model)
