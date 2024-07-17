@@ -37,16 +37,22 @@ pipeline {
         sh 'docker run my-flask-app python -m pytest app/tests/'
       }
     }
-    stage('Deploy') {
+    stage('Push image to Registry') {
       steps {
         withCredentials([usernamePassword(credentialsId: "${DOCKER_REGISTRY_CREDS}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
           sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin docker.io"
           sh 'docker push $DOCKER_BFLASK_IMAGE'
-          sh 'docker run -p 5000:5000 -td $DOCKER_BFLASK_IMAGE'
         }
       }
-    }
 
+    }
+    stage('Deploy') {
+            steps {
+                script {
+                    sh 'docker run -p 5000:5000 -td $DOCKER_BFLASK_IMAGE'
+                }
+            }
+        }
   }
 
 }
